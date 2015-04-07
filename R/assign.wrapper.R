@@ -39,7 +39,7 @@ assign.wrapper<-function (trainingData = NULL, testData, trainingLabel, testLabe
  dimnames(mcmc.pos.mean.testData$Delta_pos)=dimnames(processed.data$S_matrix)
  
  deltas<-cbind(processed.data$S_matrix,processed.data$Delta_matrix,mcmc.pos.mean.testData$Delta_pos)
- colnames(deltas)=c(paste("Prior change in expression",pathName,sep=":"),paste("Prior probability of inclusion",pathName,sep=":")paste("Posterior probability of inclusion",pathName,sep=":"))
+ colnames(deltas)=c(paste("Prior change in expression",pathName,sep=":"),paste("Prior probability of inclusion",pathName,sep=":"),paste("Posterior probability of inclusion",pathName,sep=":"))
  write.csv(round(deltas,digits = 4),"posterior_delta.csv",quote=F)
 #####End: added by moom###
   cat("Outputing results...\n")
