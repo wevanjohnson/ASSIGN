@@ -1,7 +1,7 @@
 assign.wrapper<-function (trainingData = NULL, testData, trainingLabel, testLabel = NULL, 
           geneList = NULL, n_sigGene = NA, adaptive_B = TRUE, adaptive_S = FALSE, 
           mixture_beta = TRUE, outputDir, p_beta = 0.01, theta0 = 0.05, 
-          theta1 = 0.9, iter = 2000, burn_in = 1000,control_gene=NULL) 
+          theta1 = 0.9, iter = 2000, burn_in = 1000) 
 {
   if (is.null(geneList)) {
     pathName <- names(trainingLabel)[-1]
