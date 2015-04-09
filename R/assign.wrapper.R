@@ -1,7 +1,7 @@
 assign.wrapper<-function (trainingData = NULL, testData, trainingLabel, testLabel = NULL, 
           geneList = NULL, n_sigGene = NA, adaptive_B = TRUE, adaptive_S = FALSE, 
           mixture_beta = TRUE, outputDir, p_beta = 0.01, theta0 = 0.05, 
-          theta1 = 0.9, iter = 2000, burn_in = 1000,control_gene=NULL) 
+          theta1 = 0.9, iter = 2000, burn_in = 1000) 
 {
   if (is.null(geneList)) {
     pathName <- names(trainingLabel)[-1]
@@ -31,17 +31,7 @@ assign.wrapper<-function (trainingData = NULL, testData, trainingLabel, testLabe
   mcmc.pos.mean.testData <- assign.summary(test = mcmc.chain.testData, 
                                            burn_in = burn_in, iter = iter, adaptive_B = adaptive_B, 
                                            adaptive_S = adaptive_S, mixture_beta = mixture_beta)
-####Added by moom####
- pdf("Signature_convergence.pdf") 
- plot(mcmc.chain.testData$S_mcmc)
- abline(h=0,col="red")
- dev.off()
- dimnames(mcmc.pos.mean.testData$Delta_pos)=dimnames(processed.data$S_matrix)
- 
- deltas<-cbind(processed.data$S_matrix,processed.data$Delta_matrix,mcmc.pos.mean.testData$Delta_pos)
- colnames(deltas)=c(paste("Prior change in expression",pathName,sep=":"),paste("Prior probability of inclusion",pathName,sep=":"),paste("Posterior probability of inclusion",pathName,sep=":"))
- write.csv(round(deltas,digits = 4),"posterior_delta.csv",quote=F)
-#####End: added by moom###
+
   cat("Outputing results...\n")
   if (mixture_beta) {
     if (!is.null(trainingData)) {
@@ -58,11 +48,11 @@ assign.wrapper<-function (trainingData = NULL, testData, trainingLabel, testLabe
   cwd <- getwd()
   dir.create(outputDir,showWarnings = F)##moom added this to create the output folder if doesn't exist already.
   setwd(outputDir)
-  
-  write.csv(paste(pathName,"analysis was run using the following parameters :",
-              "n_sigGene=",n_sigGene, "adaptive_B=",adaptive_B,"adaptive_S=", adaptive_S,
-              "mixture_beta=",mixture_beta,"p_beta=",p_beta,"theta0=", theta0, "theta1=",theta1, 
-              "iter=",iter, "burn_in=",burn_in,"The output files are located at:",outputDir,sep=' '),"parameters.csv")###moom added this 
+  param=as.matrix(paste(pathName,"analysis was run using the following parameters :",
+        "n_sigGene=",n_sigGene, "adaptive_B=",adaptive_B,"adaptive_S=", adaptive_S,
+        "mixture_beta=",mixture_beta,"p_beta=",p_beta,"theta0=", theta0, "theta1=",theta1, 
+        "iter=",iter, "burn_in=",burn_in,"The output files are located at:",outputDir,sep=' '))###moom added this 
+  write.table(param,"parameters.txt",col.names=F,sep='\t')###moom added this 
   if (!is.null(trainingData)) {
     rownames(coef_train) <- colnames(processed.data$trainingData_sub)
     colnames(coef_train) <- pathName
@@ -82,6 +72,20 @@ assign.wrapper<-function (trainingData = NULL, testData, trainingLabel, testLabe
     heatmap.test.pos(testData = processed.data$testData_sub, 
                      Delta_pos = mcmc.pos.mean.testData$Delta_pos, trainingLabel, 
                      testLabel, Delta_cutoff = 0.95, coef_test, geneList)
+    ####Added by moom####
+    ##Evan please double check if this is informative and needed
+    pdf("Signature_convergence.pdf") 
+    plot(mcmc.chain.testData$S_mcmc)
+    abline(h=0,col="red")
+    dev.off()
+    ##
+    dimnames(mcmc.pos.mean.testData$Delta_pos)=dimnames(processed.data$S_matrix)    
+    deltas<-cbind(processed.data$S_matrix,processed.data$Delta_matrix,mcmc.pos.mean.testData$S_pos,mcmc.pos.mean.testData$Delta_pos)
+    colnames(deltas)=c(paste("Prior change in expression",pathName,sep=":"),paste("Prior probability of inclusion",pathName,sep=":"),paste("Posterior change in expression",pathName,sep=":"),paste("Posterior probability of inclusion",pathName,sep=":"))
+    delta_in=NULL
+    for(i in 1:ncol(deltas)){delta_in[i]=(strsplit(colnames(deltas),":")[[i]][2])}
+    write.csv(round(deltas[,order(delta_in)],digits = 4),"posterior_delta.csv",quote=F)
+    #####End: added by moom###
       }
   if (!is.null(trainingData)) {
     scatter.plot.train(coef_train, trainingData, trainingLabel)
