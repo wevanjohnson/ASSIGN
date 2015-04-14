@@ -166,16 +166,18 @@ assign.mcmc <- function(Y, Bg, X, Delta_prior_p, iter=2000, adaptive_B=TRUE, ada
     
     #update S
     if (adaptive_S == TRUE){
-      mu_S_0 <- ifelse(delta_temp==1, S_0, 0)
-      s_S_inv_0 <- 1 / ifelse(delta_temp==1, sigma_s2^2, sigma_s1^2)
-      tmp4 <- s_S_inv_0 * mu_S_0
-      s_S_inv_1 <- 1 / (as.matrix(tau_temp) %*% t(as.matrix(apply(beta_temp^2, 1, sum))) + s_S_inv_0)
+      #mu_S_0 <- ifelse(delta_temp==1, S_0, 0)
+      #s_S_inv_0 <- 1 / ifelse(delta_temp==1, sigma_s2^2, sigma_s1^2)
+      #tmp4 <- s_S_inv_0 * mu_S_0
+      #s_S_inv_1 <- 1 / (as.matrix(tau_temp) %*% t(as.matrix(apply(beta_temp^2, 1, sum))) + s_S_inv_0)
       
-      for (j in 1:m){
-        E1 <-  Y_minus_B_rep - S_temp[,-j,drop=FALSE] %*% beta_temp[-j,,drop=FALSE]
-        mu_S_1 <- s_S_inv_1[, j] *(tau_temp*(E1 %*% beta_temp[j, ]) + tmp4[, j]) 
-        S_temp[,j] <- rnorm(n, mu_S_1, sqrt(s_S_inv_1[, j]))
-      }
+      #for (j in 1:m){
+      #  E1 <-  Y_minus_B_rep - S_temp[,-j,drop=FALSE] %*% beta_temp[-j,,drop=FALSE]
+      #  mu_S_1 <- s_S_inv_1[, j] *(tau_temp*(E1 %*% beta_temp[j, ]) + tmp4[, j]) 
+      #  S_temp[,j] <- rnorm(n, mu_S_1, sqrt(s_S_inv_1[, j]))
+        
+      #}
+      S_temp <- S
       
       # update delta
       
