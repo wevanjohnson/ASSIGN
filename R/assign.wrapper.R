@@ -1,7 +1,7 @@
 assign.wrapper<-function (trainingData = NULL, testData, trainingLabel, testLabel = NULL, 
           geneList = NULL, n_sigGene = NA, adaptive_B = TRUE, adaptive_S = FALSE, 
           mixture_beta = TRUE, outputDir, p_beta = 0.01, theta0 = 0.05, 
-          theta1 = 0.9, iter = 2000, burn_in = 1000) 
+          theta1 = 0.9, iter = 2000, burn_in = 1000, sigma_sZero = 0.1, sigma_sNonZero = 0.1) 
 {
   if (is.null(geneList)) {
     pathName <- names(trainingLabel)[-1]
@@ -13,9 +13,10 @@ assign.wrapper<-function (trainingData = NULL, testData, trainingLabel, testLabe
                                       trainingLabel, geneList, n_sigGene, theta0, theta1)
   if (!is.null(trainingData)) {
     cat("Estimating model parameters in the training dataset...\n")
-    mcmc.chain.trainingData <- assign.mcmc(Y = processed.data$trainingData_sub, 
-                                           Bg = processed.data$B_vector, X = processed.data$S_matrix, 
-                                           Delta_prior_p = processed.data$Pi_matrix, iter = iter, 
+    mcmc.chain.trainingData <- assign.mcmc(Y = processed.data$trainingData_sub,
+                                           Bg = processed.data$B_vector, X = processed.data$S_matrix,
+                                           Delta_prior_p = processed.data$Pi_matrix, iter = iter,
+                                           sigma_sZero = sigma_sZero, sigma_sNonZero = sigma_sNonZero,
                                            adaptive_B = FALSE, adaptive_S = FALSE, mixture_beta = TRUE)
     mcmc.pos.mean.trainingData <- assign.summary(test = mcmc.chain.trainingData, 
                                                  burn_in = burn_in, iter = iter, adaptive_B = FALSE, 
@@ -24,9 +25,10 @@ assign.wrapper<-function (trainingData = NULL, testData, trainingLabel, testLabe
   }
   cat("Estimating model parameters in the test dataset...\n")
   mcmc.chain.testData <- assign.mcmc(Y = processed.data$testData_sub, 
-                                     Bg = processed.data$B_vector, X = processed.data$S_matrix, 
-                                     Delta_prior_p = processed.data$Pi_matrix, iter = iter, 
-                                     adaptive_B = adaptive_B, adaptive_S = adaptive_S, mixture_beta = mixture_beta, 
+                                     Bg = processed.data$B_vector, X = processed.data$S_matrix,
+                                     Delta_prior_p = processed.data$Pi_matrix, iter = iter,
+                                     sigma_sZero = sigma_sZero, sigma_sNonZero = sigma_sNonZero,
+                                     adaptive_B = adaptive_B, adaptive_S = adaptive_S, mixture_beta = mixture_beta,
                                      p_beta = p_beta)
   mcmc.pos.mean.testData <- assign.summary(test = mcmc.chain.testData, 
                                            burn_in = burn_in, iter = iter, adaptive_B = adaptive_B, 
