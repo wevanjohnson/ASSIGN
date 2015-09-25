@@ -1,7 +1,94 @@
+#' ASSIGN All-in-one function
+#' 
+#' The assign.wrapper function integrates the assign.preprocess, assign.mcmc,
+#' assign.summary, assign.output, assign.cv.output functions into one wrapper
+#' function.
+#' 
+#' The assign.wrapper function is an all-in-one function which output the
+#' necessary results for the basic users. For the users who need more
+#' intermetiate results for model diagnosis, it is better to run the
+#' assign.preprocess, assign.mcmc, assign.convergence, assign.summary functions
+#' by order and extract the output values from the returned list objects of
+#' those functions.
+#' 
+#' @param trainingData The genomic measure matrix of training samples (i.g.,
+#' gene expression matrix). The dimension of this matrix is probe number x
+#' sample number. The default is NULL.
+#' @param testData The genomic measure matrix of test samples (i.g., gene
+#' expression matrix). The dimension of this matrix is probe number x sample
+#' number.
+#' @param trainingLabel The list linking the index of each training sample to a
+#' specific group it belongs to. See examples for more information.
+#' @param testLabel The vector of the phenotypes/labels of the test samples.
+#' The default is NULL.
+#' @param geneList The list that collects the signature genes of one/multiple
+#' pathways. Every component of this list contains the signature genes
+#' associated with one pathway. The default is NULL.
+#' @param n_sigGene The vector of the signature genes to be identified for one
+#' pathway. n_sigGene needs to be specified when geneList is set NULL. The
+#' default is NA. See examples for more information.
+#' @param adaptive_B Logicals. If TRUE, the model adapts the
+#' baseline/background (B) of genomic measures for the test samples. The
+#' default is TRUE.
+#' @param adaptive_S Logicals. If TRUE, the model adapts the signatures (S) of
+#' genomic measures for the test samples. The default is FALSE.
+#' @param mixture_beta Logicals. If TRUE, elements of the pathway activation
+#' matrix are modeled by a spike-and-slab mixuture distribution. The default is
+#' TRUE.
+#' @param outputDir The path to the directory to save the output files. The
+#' path needs to be quoted in double quotation marks.
+#' @param p_beta p_beta is the prior probability of a pathway being activated
+#' in individual test samples. The default is 0.01.
+#' @param theta0 The prior probability for a gene to be significant, given that
+#' the gene is NOT defined as "significant" in the signature gene lists
+#' provided by the user. The default is 0.05.
+#' @param theta1 The prior probability for a gene to be significant, given that
+#' the gene is defined as "significant" in the signature gene lists provided by
+#' the user. The default is 0.9.
+#' @param iter The number of iterations in the MCMC. The default is 2000.
+#' @param burn_in The number of burn-in iterations. These iterations are
+#' discarded when computing the posterior means of the model parameters. The
+#' default is 1000.
+#' @param sigma_sZero Each element of the signature matrix (S) is modeled by a
+#' spike-and-slab mixuture distribution. Sigma_sZero is the variance of the 
+#' spike normal distribution. The default is 0.01.
+#' @param sigma_sNonZero Each element of the signature matrix (S) is modeled by
+#' a spike-and-slab mixuture distribution. Sigma_sNonZero is the variance of
+#' the slab normal distribution. The default is 1.
+#' @param S_zeroPrior Logicals. If TRUE, the prior distritribution of signature
+#' follows a normal distribution with mean zero. The default is TRUE.
+#' @return The assign.wrapper returns one/multiple pathway activity for each
+#' individual training samples and test samples, scatter plots of pathway
+#' activity for each individual pathway in the training and test samples,
+#' heatmap plots for gene expression signatures for each individual pathways,
+#' heatmap plots for the gene expression of the prior signature and posterior
+#' signtures (if adaptive_S equals TRUE) of each individual pathway in the test
+#' samples.
+#' @author Ying Shen and W. Evan Johnson
+#' @examples
+#' 
+#' \dontshow{
+#' setwd(tempdir())
+#' tempdir <- tempdir()
+#' }
+#' data(trainingData1)
+#' data(testData1)
+#' data(geneList1)
+#' 
+#' trainingLabel1 <- list(control = list(bcat=1:10, e2f3=1:10, myc=1:10, ras=1:10, 
+#' src=1:10), bcat = 11:19, e2f3 = 20:28, myc= 29:38, ras = 39:48, src = 49:55)
+#' testLabel1 <- rep(c("subtypeA","subtypeB"),c(53,58))
+#' 
+#' assign.wrapper(trainingData=trainingData1, testData=testData1, 
+#' trainingLabel=trainingLabel1, testLabel=testLabel1, geneList=geneList1, 
+#' adaptive_B=TRUE, adaptive_S=FALSE, mixture_beta=TRUE, 
+#' outputDir=tempdir, p_beta=0.01, theta0=0.05, theta1=0.9, 
+#' iter=20, burn_in=10) 
+#' 
 assign.wrapper<-function (trainingData = NULL, testData, trainingLabel, testLabel = NULL, 
           geneList = NULL, n_sigGene = NA, adaptive_B = TRUE, adaptive_S = FALSE, 
           mixture_beta = TRUE, outputDir, p_beta = 0.01, theta0 = 0.05, 
-          theta1 = 0.9, iter = 2000, burn_in = 1000) 
+          theta1 = 0.9, iter = 2000, burn_in = 1000, sigma_sZero = 0.01, sigma_sNonZero = 1, S_zeroPrior=TRUE) 
 {
   if (is.null(geneList)) {
     pathName <- names(trainingLabel)[-1]
@@ -13,9 +100,10 @@ assign.wrapper<-function (trainingData = NULL, testData, trainingLabel, testLabe
                                       trainingLabel, geneList, n_sigGene, theta0, theta1)
   if (!is.null(trainingData)) {
     cat("Estimating model parameters in the training dataset...\n")
-    mcmc.chain.trainingData <- assign.mcmc(Y = processed.data$trainingData_sub, 
-                                           Bg = processed.data$B_vector, X = processed.data$S_matrix, 
-                                           Delta_prior_p = processed.data$Pi_matrix, iter = iter, 
+    mcmc.chain.trainingData <- assign.mcmc(Y = processed.data$trainingData_sub,
+                                           Bg = processed.data$B_vector, X = processed.data$S_matrix,
+                                           Delta_prior_p = processed.data$Pi_matrix, iter = iter,
+                                           sigma_sZero = sigma_sZero, sigma_sNonZero = sigma_sNonZero, S_zeroPrior=S_zeroPrior,
                                            adaptive_B = FALSE, adaptive_S = FALSE, mixture_beta = TRUE)
     mcmc.pos.mean.trainingData <- assign.summary(test = mcmc.chain.trainingData, 
                                                  burn_in = burn_in, iter = iter, adaptive_B = FALSE, 
@@ -24,9 +112,10 @@ assign.wrapper<-function (trainingData = NULL, testData, trainingLabel, testLabe
   }
   cat("Estimating model parameters in the test dataset...\n")
   mcmc.chain.testData <- assign.mcmc(Y = processed.data$testData_sub, 
-                                     Bg = processed.data$B_vector, X = processed.data$S_matrix, 
-                                     Delta_prior_p = processed.data$Pi_matrix, iter = iter, 
-                                     adaptive_B = adaptive_B, adaptive_S = adaptive_S, mixture_beta = mixture_beta, 
+                                     Bg = processed.data$B_vector, X = processed.data$S_matrix,
+                                     Delta_prior_p = processed.data$Pi_matrix, iter = iter,
+                                     sigma_sZero = sigma_sZero, sigma_sNonZero = sigma_sNonZero, S_zeroPrior=S_zeroPrior,
+                                     adaptive_B = adaptive_B, adaptive_S = adaptive_S, mixture_beta = mixture_beta,
                                      p_beta = p_beta)
   mcmc.pos.mean.testData <- assign.summary(test = mcmc.chain.testData, 
                                            burn_in = burn_in, iter = iter, adaptive_B = adaptive_B, 
@@ -106,5 +195,3 @@ assign.wrapper<-function (trainingData = NULL, testData, trainingLabel, testLabe
   save(output.data, file = "output.rda")
   setwd(cwd)
 }
-
-
