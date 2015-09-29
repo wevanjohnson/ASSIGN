@@ -174,7 +174,9 @@ assign.mcmc <- function(Y, Bg, X, Delta_prior_p, iter=2000, adaptive_B=TRUE, ada
       for (j in 1:m){
         E1 <-  Y_minus_B_rep - S_temp[,-j,drop=FALSE] %*% beta_temp[-j,,drop=FALSE]
         mu_S_1 <- s_S_inv_1[, j] *(tau_temp*(E1 %*% beta_temp[j, ]) + tmp4[, j]) 
-        S_temp[,j] <- rnorm(n, mu_S_1, sqrt(s_S_inv_1[, j]))
+        lower <- ifelse(mu_S_0[,j]>0, 0, -Inf)
+        upper <- ifelse(mu_S_0[,j]>=0, Inf, 0)
+        S_temp[,j] <- rtnorm(n, mu_S_1, sqrt(s_S_inv_1[, j]),lower, upper)
       }
       
       # update delta
