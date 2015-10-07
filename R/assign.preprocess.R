@@ -1,4 +1,5 @@
 assign.preprocess <- function(trainingData=NULL, testData, trainingLabel, geneList=NULL, n_sigGene=NA, theta0=0.05, theta1=0.9){
+  cat("Runing ASSIGN development version: truncated_S\n")
   cat("Performing QC on the input data...\n")
   dat <- qc(trainingData, testData, geneList)
   if (!is.null(trainingLabel)){
