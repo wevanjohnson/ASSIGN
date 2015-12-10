@@ -3,7 +3,7 @@
 data_prep_s1 <- function(n_sigGene, trainingData, testData, trainingLabel, geneList, theta0, theta1)
 {
   if (is.null(geneList)){  
-    geneSelection <- bayes.gene.selection(n_sigGene, dat=trainingData, trainingLabel,iter=100, burn_in=50, sigmaZero = 0.1, sigmaNonZero = 1, alpha_tau = 1, beta_tau = 0.01, p = 0.01)
+    geneSelection <- bayes.gene.selection(n_sigGene, dat=trainingData, trainingLabel,iter=5000, burn_in=500, sigmaZero = 0.1, sigmaNonZero = 1, alpha_tau = 1, beta_tau = 0.01, p = 0.01)
     diffGeneList <- geneSelection$diffGeneList
     signature <- geneMatch_sub2(dat=trainingData, diffGeneList, trainingLabel)
   } else {
