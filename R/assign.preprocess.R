@@ -1,5 +1,5 @@
 assign.preprocess <- function(trainingData=NULL, testData, anchorGenes=NULL, excludeGenes=NULL,
-                              trainingLabel, geneList=NULL, n_sigGene=NA, theta0=0.05, theta1=0.9){
+                              trainingLabel, geneList=NULL, n_sigGene=NA, theta0=0.05, theta1=0.9, balanced=FALSE, pctUp=0.5){
   cat("Runing ASSIGN development version: truncated_S\n")
   cat("Performing QC on the input data...\n")
   dat <- qc(trainingData, testData, geneList)
@@ -14,7 +14,7 @@ assign.preprocess <- function(trainingData=NULL, testData, anchorGenes=NULL, exc
   if (!is.null(trainingData) & !is.null(trainingLabel)){
     x <- data_prep_s1(n_sigGene, trainingData=dat$trainingData, testData=dat$testData,
                       trainingLabel, anchorGenes, excludeGenes, geneList=dat$geneList,
-                      theta0, theta1)
+                      theta0, theta1, balanced=balanced, pctUp=pctUp)
     return(list(trainingData_sub=x$trainingData_sub, testData_sub=x$testData_sub,
                 B_vector=x$trainingBaseline_sub, S_matrix=x$S_matrix,
                 Delta_matrix=x$Delta_matrix, Pi_matrix=x$Pi_matrix, diffGeneList=x$diffGeneList))
