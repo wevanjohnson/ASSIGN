@@ -34,6 +34,10 @@
 #' @param testData The genomic measure matrix of test samples (i.g., gene
 #' expression matrix). The dimension of this matrix is probe number x sample
 #' number.
+#' @param anchorGenes A list of genes that will be included in the signature
+#' even if they are not chosen during gene selection.
+#' @param excludeGenes A list of genes that will be excluded from the signature
+#' even if they are chosen during gene selection.
 #' @param trainingLabel The list linking the index of each training sample to a
 #' specific group it belongs to. See details and examples for more information.
 #' @param geneList The list that collects the signature genes of one/multiple
@@ -48,6 +52,12 @@
 #' @param theta1 The prior probability for a gene to be significant, given that
 #' the gene is defined as "significant" in the signature gene lists provided by
 #' the user. The default is 0.9.
+#' @param balanced Logicals. If TRUE, the genes chosen for the signature that
+#' increase with pathway activity and decrease with pathway activity will be
+#' chosen with the fraction specified by pctUp. The default is FALSE.
+#' @param pctUp When running ASSIGN with a balanced signature, specifies the
+#' percent of the genes in the signature that increase with pathway activity.
+#' The default is 0.5.
 #' @return \item{trainingData_sub}{The G x N matrix of G genomic measures
 #' (i.g., gene expession) of N training samples. Genes/probes present in at
 #' least one pathway signature are retained. Only returned when the training

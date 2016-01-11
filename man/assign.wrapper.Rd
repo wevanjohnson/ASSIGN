@@ -31,9 +31,11 @@ The default is NULL.}
 pathways. Every component of this list contains the signature genes
 associated with one pathway. The default is NULL.}
 
-\item{anchorGenes}{}
+\item{anchorGenes}{A list of genes that will be included in the signature
+even if they are not chosen during gene selection.}
 
-\item{excludeGenes}{}
+\item{excludeGenes}{A list of genes that will be excluded from the signature
+even if they are chosen during gene selection.}
 
 \item{n_sigGene}{The vector of the signature genes to be identified for one
 pathway. n_sigGene needs to be specified when geneList is set NULL. The

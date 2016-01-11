@@ -17,6 +17,12 @@ sample number. The default is NULL.}
 expression matrix). The dimension of this matrix is probe number x sample
 number.}
 
+\item{anchorGenes}{A list of genes that will be included in the signature
+even if they are not chosen during gene selection.}
+
+\item{excludeGenes}{A list of genes that will be excluded from the signature
+even if they are chosen during gene selection.}
+
 \item{trainingLabel}{The list linking the index of each training sample to a
 specific group it belongs to. See details and examples for more information.}
 
@@ -35,6 +41,14 @@ provided by the user. The default is 0.05.}
 \item{theta1}{The prior probability for a gene to be significant, given that
 the gene is defined as "significant" in the signature gene lists provided by
 the user. The default is 0.9.}
+
+\item{balanced}{Logicals. If TRUE, the genes chosen for the signature that
+increase with pathway activity and decrease with pathway activity will be
+chosen with the fraction specified by pctUp. The default is FALSE.}
+
+\item{pctUp}{When running ASSIGN with a balanced signature, specifies the
+percent of the genes in the signature that increase with pathway activity.
+The default is 0.5.}
 }
 \value{
 \item{trainingData_sub}{The G x N matrix of G genomic measures
