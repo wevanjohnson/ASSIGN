@@ -5,10 +5,12 @@
 \title{ASSIGN All-in-one function}
 \usage{
 assign.wrapper(trainingData = NULL, testData, trainingLabel,
-  testLabel = NULL, geneList = NULL, n_sigGene = NA, adaptive_B = TRUE,
+  testLabel = NULL, geneList = NULL, anchorGenes = NULL,
+  excludeGenes = NULL, n_sigGene = NA, adaptive_B = TRUE,
   adaptive_S = FALSE, mixture_beta = TRUE, outputDir, p_beta = 0.01,
   theta0 = 0.05, theta1 = 0.9, iter = 2000, burn_in = 1000,
-  sigma_sZero = 0.01, sigma_sNonZero = 1, S_zeroPrior = TRUE)
+  sigma_sZero = 0.01, sigma_sNonZero = 1, S_zeroPrior = FALSE,
+  balanced = FALSE, pctUp = 0.5)
 }
 \arguments{
 \item{trainingData}{The genomic measure matrix of training samples (i.g.,

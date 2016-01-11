@@ -50,7 +50,7 @@
 #' discarded when computing the posterior means of the model parameters. The
 #' default is 1000.
 #' @param sigma_sZero Each element of the signature matrix (S) is modeled by a
-#' spike-and-slab mixuture distribution. Sigma_sZero is the variance of the 
+#' spike-and-slab mixuture distribution. Sigma_sZero is the variance of the
 #' spike normal distribution. The default is 0.01.
 #' @param sigma_sNonZero Each element of the signature matrix (S) is modeled by
 #' a spike-and-slab mixuture distribution. Sigma_sNonZero is the variance of
@@ -75,16 +75,17 @@
 #' data(testData1)
 #' data(geneList1)
 #' 
-#' trainingLabel1 <- list(control = list(bcat=1:10, e2f3=1:10, myc=1:10, ras=1:10, 
+#' trainingLabel1 <- list(control = list(bcat=1:10, e2f3=1:10, myc=1:10, ras=1:10,
 #' src=1:10), bcat = 11:19, e2f3 = 20:28, myc= 29:38, ras = 39:48, src = 49:55)
 #' testLabel1 <- rep(c("subtypeA","subtypeB"),c(53,58))
 #' 
-#' assign.wrapper(trainingData=trainingData1, testData=testData1, 
-#' trainingLabel=trainingLabel1, testLabel=testLabel1, geneList=geneList1, 
-#' adaptive_B=TRUE, adaptive_S=FALSE, mixture_beta=TRUE, 
-#' outputDir=tempdir, p_beta=0.01, theta0=0.05, theta1=0.9, 
-#' iter=20, burn_in=10) 
+#' assign.wrapper(trainingData=trainingData1, testData=testData1,
+#' trainingLabel=trainingLabel1, testLabel=testLabel1, geneList=geneList1,
+#' adaptive_B=TRUE, adaptive_S=FALSE, mixture_beta=TRUE,
+#' outputDir=tempdir, p_beta=0.01, theta0=0.05, theta1=0.9,
+#' iter=20, burn_in=10)
 #' 
+#' @export assign.wrapper
 assign.wrapper<-function (trainingData = NULL, testData, trainingLabel, testLabel = NULL,
           geneList = NULL, anchorGenes = NULL, excludeGenes = NULL, n_sigGene = NA,
           adaptive_B = TRUE, adaptive_S = FALSE, mixture_beta = TRUE, outputDir, p_beta = 0.01,
