@@ -4,7 +4,7 @@ sudo: required
 
 warnings_are_errors: true
 
-rpackages:
+r_packages:
  - Rlab
  - msm
  - gplots
