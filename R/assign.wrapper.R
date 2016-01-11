@@ -4,11 +4,11 @@
 #' assign.summary, assign.output, assign.cv.output functions into one wrapper
 #' function.
 #' 
-#' The assign.wrapper function is an all-in-one function which output the
-#' necessary results for the basic users. For the users who need more
-#' intermetiate results for model diagnosis, it is better to run the
+#' The assign.wrapper function is an all-in-one function which outputs the
+#' necessary results for basic users. For users who need more
+#' intermediate results for model diagnosis, it is better to run the
 #' assign.preprocess, assign.mcmc, assign.convergence, assign.summary functions
-#' by order and extract the output values from the returned list objects of
+#' separately and extract the output values from the returned list objects of
 #' those functions.
 #' 
 #' @param trainingData The genomic measure matrix of training samples (i.g.,
@@ -24,6 +24,10 @@
 #' @param geneList The list that collects the signature genes of one/multiple
 #' pathways. Every component of this list contains the signature genes
 #' associated with one pathway. The default is NULL.
+#' @param anchorGenes A list of genes that will be included in the signature
+#' even if they are not chosen during gene selection.
+#' @param excludeGenes A list of genes that will be excluded from the signature
+#' even if they are chosen during gene selection.
 #' @param n_sigGene The vector of the signature genes to be identified for one
 #' pathway. n_sigGene needs to be specified when geneList is set NULL. The
 #' default is NA. See examples for more information.
@@ -57,13 +61,19 @@
 #' the slab normal distribution. The default is 1.
 #' @param S_zeroPrior Logicals. If TRUE, the prior distritribution of signature
 #' follows a normal distribution with mean zero. The default is TRUE.
+#' @param balanced Logicals. If TRUE, the genes chosen for the signature that
+#' increase with pathway activity and decrease with pathway activity will be
+#' chosen with the fraction specified by pctUp. The default is FALSE.
+#' @param pctUp When running ASSIGN with a balanced signature, specifies the
+#' percent of the genes in the signature that increase with pathway activity.
+#' The default is 0.5.
 #' @return The assign.wrapper returns one/multiple pathway activity for each
-#' individual training samples and test samples, scatter plots of pathway
-#' activity for each individual pathway in the training and test samples,
-#' heatmap plots for gene expression signatures for each individual pathways,
-#' heatmap plots for the gene expression of the prior signature and posterior
+#' individual training sample and test sample, scatter plots of pathway
+#' activity for each individual pathway in the training and test data,
+#' heatmap plots for gene expression signatures for each individual pathway,
+#' heatmap plots for the gene expression of the prior and posterior
 #' signtures (if adaptive_S equals TRUE) of each individual pathway in the test
-#' samples.
+#' data
 #' @author Ying Shen and W. Evan Johnson
 #' @examples
 #' 
