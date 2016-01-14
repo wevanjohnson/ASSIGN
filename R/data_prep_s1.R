@@ -2,13 +2,13 @@
 
 data_prep_s1 <- function(n_sigGene, trainingData, testData, trainingLabel,
                          geneList, anchorGenes, excludeGenes, theta0,
-                         theta1, balanced=FALSE, pctUp=0.5)
+                         theta1, pctUp=0.5)
 {
   if (is.null(geneList)){  
     geneSelection <- bayes.gene.selection(n_sigGene, dat=trainingData, trainingLabel,
                                           iter=500, burn_in=100, sigmaZero = 0.1,
                                           sigmaNonZero = 1, alpha_tau = 1, beta_tau=0.01,
-                                          p = 0.01, balanced=balanced, pctUp=pctUp)
+                                          p = 0.01, pctUp=pctUp)
     diffGeneList <- geneSelection$diffGeneList
   } else {
     diffGeneList <- geneList

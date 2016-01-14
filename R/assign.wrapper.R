@@ -61,10 +61,12 @@
 #' the slab normal distribution. The default is 1.
 #' @param S_zeroPrior Logicals. If TRUE, the prior distritribution of signature
 #' follows a normal distribution with mean zero. The default is TRUE.
-#' @param balanced Logicals. If TRUE, the genes chosen for the signature that
-#' increase with pathway activity and decrease with pathway activity will be
-#' chosen with the fraction specified by pctUp. The default is FALSE.
-#' @param pctUp When running ASSIGN with a balanced signature, specifies the
+#' @param pctUp By default, ASSIGN bayesian gene selection chooses the
+#' signature genes with an equal fraction of genes that increase with pathway
+#' activity and genes that decrease with pathway activity. Use the pctUp
+#' parameter to modify this fraction. Set pctUP to NULL to select the most
+#' significant genes, regardless of direction. The default is 0.5
+#' When running ASSIGN with a balanced signature, specifies the
 #' percent of the genes in the signature that increase with pathway activity.
 #' The default is 0.5.
 #' @return The assign.wrapper returns one/multiple pathway activity for each
@@ -100,7 +102,7 @@ assign.wrapper<-function (trainingData = NULL, testData, trainingLabel, testLabe
           geneList = NULL, anchorGenes = NULL, excludeGenes = NULL, n_sigGene = NA,
           adaptive_B = TRUE, adaptive_S = FALSE, mixture_beta = TRUE, outputDir, p_beta = 0.01,
           theta0 = 0.05, theta1 = 0.9, iter = 2000, burn_in = 1000, sigma_sZero = 0.01,
-          sigma_sNonZero = 1, S_zeroPrior=FALSE, balanced=FALSE, pctUp=0.5)
+          sigma_sNonZero = 1, S_zeroPrior=FALSE, pctUp=0.5)
 {
   if (is.null(geneList)) {
     pathName <- names(trainingLabel)[-1]
@@ -109,7 +111,7 @@ assign.wrapper<-function (trainingData = NULL, testData, trainingLabel, testLabe
     pathName <- names(geneList)
   }
   processed.data <- assign.preprocess(trainingData, testData, anchorGenes, excludeGenes,
-                                      trainingLabel, geneList, n_sigGene, theta0, theta1, balanced=balanced, pctUp=pctUp)
+                                      trainingLabel, geneList, n_sigGene, theta0, theta1, pctUp=pctUp)
   if (!is.null(trainingData)) {
     cat("Estimating model parameters in the training dataset...\n")
     mcmc.chain.trainingData <- assign.mcmc(Y = processed.data$trainingData_sub,

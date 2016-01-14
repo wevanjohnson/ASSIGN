@@ -1,6 +1,6 @@
 bayes.gene.selection <- function(n_sigGene, dat, trainingLabel,iter=500, burn_in=100,
                                  sigmaZero = 0.1, sigmaNonZero = 1, alpha_tau = 1,
-                                 beta_tau = 0.01, p = 0.01, balanced=FALSE, pctUp=0.5)
+                                 beta_tau = 0.01, p = 0.01, pctUp=0.5)
 {
   nPath <- length(trainingLabel) - 1
   bgPosB <- NULL; edPosB <- NULL
@@ -74,7 +74,7 @@ bayes.gene.selection <- function(n_sigGene, dat, trainingLabel,iter=500, burn_in
   
   diffGeneList <- vector("list")
   for (j in 1:m){
-    if(balanced){
+    if(!is.null(pctUp)){
       tmp_up   <- order((S_pos[,j] * r_pos[,j]), decreasing=TRUE)[1:floor(n_sigGene[j]/(1/(pctUp)))]
       tmp_down <- order((S_pos[,j] * r_pos[,j]), decreasing=FALSE)[1:ceiling(n_sigGene[j]/(1/(1-pctUp)))]
       tmp <- c(tmp_up, tmp_down)
