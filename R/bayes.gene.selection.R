@@ -1,4 +1,4 @@
-bayes.gene.selection <- function(n_sigGene, dat, trainingLabel,iter=100, burn_in=50,
+bayes.gene.selection <- function(n_sigGene, dat, trainingLabel,iter=500, burn_in=100,
                                  sigmaZero = 0.1, sigmaNonZero = 1, alpha_tau = 1,
                                  beta_tau = 0.01, p = 0.01, balanced=FALSE, pctUp=0.5)
 {
