@@ -10,7 +10,7 @@ assign.wrapper(trainingData = NULL, testData, trainingLabel,
   adaptive_S = FALSE, mixture_beta = TRUE, outputDir, p_beta = 0.01,
   theta0 = 0.05, theta1 = 0.9, iter = 2000, burn_in = 1000,
   sigma_sZero = 0.01, sigma_sNonZero = 1, S_zeroPrior = FALSE,
-  pctUp = 0.5)
+  pctUp = 0.5, geneselect_iter = 500, geneselect_burn_in = 100)
 }
 \arguments{
 \item{trainingData}{The genomic measure matrix of training samples (i.g.,
@@ -91,6 +91,12 @@ significant genes, regardless of direction. The default is 0.5
 When running ASSIGN with a balanced signature, specifies the
 percent of the genes in the signature that increase with pathway activity.
 The default is 0.5.}
+
+\item{geneselect_iter}{The number of iterations for bayesian gene selection. The
+default is 500.}
+
+\item{geneselect_burn_in}{The number of burn-in iterations for bayesian gene selection.
+The default is 100}
 }
 \value{
 The assign.wrapper returns one/multiple pathway activity for each

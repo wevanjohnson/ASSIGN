@@ -6,7 +6,8 @@
 \usage{
 assign.preprocess(trainingData = NULL, testData, anchorGenes = NULL,
   excludeGenes = NULL, trainingLabel, geneList = NULL, n_sigGene = NA,
-  theta0 = 0.05, theta1 = 0.9, pctUp = 0.5)
+  theta0 = 0.05, theta1 = 0.9, pctUp = 0.5, geneselect_iter = 500,
+  geneselect_burn_in = 100)
 }
 \arguments{
 \item{trainingData}{The genomic measure matrix of training samples (i.g.,
@@ -50,6 +51,12 @@ significant genes, regardless of direction. The default is 0.5
 When running ASSIGN with a balanced signature, specifies the
 percent of the genes in the signature that increase with pathway activity.
 The default is 0.5.}
+
+\item{geneselect_iter}{The number of iterations for bayesian gene selection. The
+default is 500.}
+
+\item{geneselect_burn_in}{The number of burn-in iterations for bayesian gene selection.
+The default is 100}
 }
 \value{
 \item{trainingData_sub}{The G x N matrix of G genomic measures
