@@ -1,32 +1,33 @@
-Package: ASSIGN
+# ASSIGN: Adaptive Signature Selection and InteGratioN
 
-Type: Package
+__Author__: Ying Shen, Andrea H. Bild, David Jenkins, and W. Evan Johnson
 
-Title: Adaptive Signature Selection and InteGratioN (ASSIGN)
+__Maintainer__: [David Jenkins](https://github.com/dfjenkins3), [W. Evan Johnson](https://github.com/wevanjohnson/), [Mumtehena Rahman](https://github.com/mumtahena), and Ying Shen <yshen3@bu.edu>
 
-Version: 1.3.6
+ASSIGN is a computational tool to evaluate the pathway
+deregulation/activation status in individual patient samples.
+ASSIGN employs a flexible Bayesian factor analysis approach
+that adapts predetermined pathway signatures derived either
+from knowledge-based literatures or from perturbation
+experiments to the cell-/tissue-specific pathway signatures.
+The deregulation/activation level of each context-specific
+pathway is quantified to a score, which represents the extent
+to which a patient sample encompasses the pathway
+deregulation/activation signature.
 
-Date: 2014-10-30
+## Installation
 
-Author: Ying Shen, Andrea H. Bild, and W. Evan Johnson
+ASSIGN is available on Bioconductor:
 
-Maintainer: Ying Shen <yshen3@bu.edu>
+```
+## try http:// if https:// URLs are not supported
+source("https://bioconductor.org/biocLite.R")
+biocLite("ASSIGN")
+```
 
-Depends: Rlab, msm, gplots
+Or install the development version from github:
 
-Description: ASSIGN is a computational tool to evaluate the pathway
-        deregulation/activation status in individual patient samples.
-        ASSIGN employs a flexible Bayesian factor analysis approach
-        that adapts predetermined pathway signatures derived either
-        from knowledge-based literatures or from perturbation
-        experiments to the cell-/tissue-specific pathway signatures.
-        The deregulation/activation level of each context-specific
-        pathway is quantified to a score, which represents the extent
-        to which a patient sample encompasses the pathway
-        deregulation/activation signature.
-
-License: MIT
-
-Imports: graphics, grDevices, stats, utils
-
-biocViews: Software, GeneExpression, Pathways, Bayesian
+```
+# install.packages("devtools")
+devtools::install_github("wevanjohnson/ASSIGN")
+```
