@@ -87,10 +87,7 @@ follows a normal distribution with mean zero. The default is TRUE.}
 signature genes with an equal fraction of genes that increase with pathway
 activity and genes that decrease with pathway activity. Use the pctUp
 parameter to modify this fraction. Set pctUP to NULL to select the most
-significant genes, regardless of direction. The default is 0.5
-When running ASSIGN with a balanced signature, specifies the
-percent of the genes in the signature that increase with pathway activity.
-The default is 0.5.}
+significant genes, regardless of direction. The default is 0.5}
 
 \item{geneselect_iter}{The number of iterations for bayesian gene selection. The
 default is 500.}

@@ -57,9 +57,6 @@
 #' activity and genes that decrease with pathway activity. Use the pctUp
 #' parameter to modify this fraction. Set pctUP to NULL to select the most
 #' significant genes, regardless of direction. The default is 0.5
-#' When running ASSIGN with a balanced signature, specifies the
-#' percent of the genes in the signature that increase with pathway activity.
-#' The default is 0.5.
 #' @param geneselect_iter The number of iterations for bayesian gene selection. The
 #' default is 500.
 #' @param geneselect_burn_in The number of burn-in iterations for bayesian gene selection.
