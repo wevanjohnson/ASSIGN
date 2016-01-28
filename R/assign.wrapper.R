@@ -4,11 +4,11 @@
 #' assign.summary, assign.output, assign.cv.output functions into one wrapper
 #' function.
 #' 
-#' The assign.wrapper function is an all-in-one function which output the
-#' necessary results for the basic users. For the users who need more
-#' intermetiate results for model diagnosis, it is better to run the
+#' The assign.wrapper function is an all-in-one function which outputs the
+#' necessary results for basic users. For users who need more
+#' intermediate results for model diagnosis, it is better to run the
 #' assign.preprocess, assign.mcmc, assign.convergence, assign.summary functions
-#' by order and extract the output values from the returned list objects of
+#' separately and extract the output values from the returned list objects of
 #' those functions.
 #' 
 #' @param trainingData The genomic measure matrix of training samples (i.g.,
@@ -24,6 +24,10 @@
 #' @param geneList The list that collects the signature genes of one/multiple
 #' pathways. Every component of this list contains the signature genes
 #' associated with one pathway. The default is NULL.
+#' @param anchorGenes A list of genes that will be included in the signature
+#' even if they are not chosen during gene selection.
+#' @param excludeGenes A list of genes that will be excluded from the signature
+#' even if they are chosen during gene selection.
 #' @param n_sigGene The vector of the signature genes to be identified for one
 #' pathway. n_sigGene needs to be specified when geneList is set NULL. The
 #' default is NA. See examples for more information.
@@ -50,20 +54,29 @@
 #' discarded when computing the posterior means of the model parameters. The
 #' default is 1000.
 #' @param sigma_sZero Each element of the signature matrix (S) is modeled by a
-#' spike-and-slab mixuture distribution. Sigma_sZero is the variance of the 
+#' spike-and-slab mixuture distribution. Sigma_sZero is the variance of the
 #' spike normal distribution. The default is 0.01.
 #' @param sigma_sNonZero Each element of the signature matrix (S) is modeled by
 #' a spike-and-slab mixuture distribution. Sigma_sNonZero is the variance of
 #' the slab normal distribution. The default is 1.
 #' @param S_zeroPrior Logicals. If TRUE, the prior distritribution of signature
 #' follows a normal distribution with mean zero. The default is TRUE.
+#' @param pctUp By default, ASSIGN bayesian gene selection chooses the
+#' signature genes with an equal fraction of genes that increase with pathway
+#' activity and genes that decrease with pathway activity. Use the pctUp
+#' parameter to modify this fraction. Set pctUP to NULL to select the most
+#' significant genes, regardless of direction. The default is 0.5
+#' @param geneselect_iter The number of iterations for bayesian gene selection. The
+#' default is 500.
+#' @param geneselect_burn_in The number of burn-in iterations for bayesian gene selection.
+#' The default is 100
 #' @return The assign.wrapper returns one/multiple pathway activity for each
-#' individual training samples and test samples, scatter plots of pathway
-#' activity for each individual pathway in the training and test samples,
-#' heatmap plots for gene expression signatures for each individual pathways,
-#' heatmap plots for the gene expression of the prior signature and posterior
+#' individual training sample and test sample, scatter plots of pathway
+#' activity for each individual pathway in the training and test data,
+#' heatmap plots for gene expression signatures for each individual pathway,
+#' heatmap plots for the gene expression of the prior and posterior
 #' signtures (if adaptive_S equals TRUE) of each individual pathway in the test
-#' samples.
+#' data
 #' @author Ying Shen and W. Evan Johnson
 #' @examples
 #' 
@@ -75,20 +88,22 @@
 #' data(testData1)
 #' data(geneList1)
 #' 
-#' trainingLabel1 <- list(control = list(bcat=1:10, e2f3=1:10, myc=1:10, ras=1:10, 
+#' trainingLabel1 <- list(control = list(bcat=1:10, e2f3=1:10, myc=1:10, ras=1:10,
 #' src=1:10), bcat = 11:19, e2f3 = 20:28, myc= 29:38, ras = 39:48, src = 49:55)
 #' testLabel1 <- rep(c("subtypeA","subtypeB"),c(53,58))
 #' 
-#' assign.wrapper(trainingData=trainingData1, testData=testData1, 
-#' trainingLabel=trainingLabel1, testLabel=testLabel1, geneList=geneList1, 
-#' adaptive_B=TRUE, adaptive_S=FALSE, mixture_beta=TRUE, 
-#' outputDir=tempdir, p_beta=0.01, theta0=0.05, theta1=0.9, 
-#' iter=20, burn_in=10) 
+#' assign.wrapper(trainingData=trainingData1, testData=testData1,
+#' trainingLabel=trainingLabel1, testLabel=testLabel1, geneList=geneList1,
+#' adaptive_B=TRUE, adaptive_S=FALSE, mixture_beta=TRUE,
+#' outputDir=tempdir, p_beta=0.01, theta0=0.05, theta1=0.9,
+#' iter=20, burn_in=10)
 #' 
-assign.wrapper<-function (trainingData = NULL, testData, trainingLabel, testLabel = NULL, 
-          geneList = NULL, n_sigGene = NA, adaptive_B = TRUE, adaptive_S = FALSE, 
-          mixture_beta = TRUE, outputDir, p_beta = 0.01, theta0 = 0.05, 
-          theta1 = 0.9, iter = 2000, burn_in = 1000, sigma_sZero = 0.01, sigma_sNonZero = 1, S_zeroPrior=TRUE) 
+#' @export assign.wrapper
+assign.wrapper<-function (trainingData = NULL, testData, trainingLabel, testLabel = NULL,
+          geneList = NULL, anchorGenes = NULL, excludeGenes = NULL, n_sigGene = NA,
+          adaptive_B = TRUE, adaptive_S = FALSE, mixture_beta = TRUE, outputDir, p_beta = 0.01,
+          theta0 = 0.05, theta1 = 0.9, iter = 2000, burn_in = 1000, sigma_sZero = 0.01,
+          sigma_sNonZero = 1, S_zeroPrior=FALSE, pctUp=0.5, geneselect_iter=500, geneselect_burn_in=100)
 {
   if (is.null(geneList)) {
     pathName <- names(trainingLabel)[-1]
@@ -96,8 +111,9 @@ assign.wrapper<-function (trainingData = NULL, testData, trainingLabel, testLabe
   else {
     pathName <- names(geneList)
   }
-  processed.data <- assign.preprocess(trainingData, testData, 
-                                      trainingLabel, geneList, n_sigGene, theta0, theta1)
+  processed.data <- assign.preprocess(trainingData, testData, anchorGenes, excludeGenes,
+                                      trainingLabel, geneList, n_sigGene, theta0, theta1, pctUp=pctUp,
+                                      geneselect_iter=geneselect_iter, geneselect_burn_in=geneselect_burn_in)
   if (!is.null(trainingData)) {
     cat("Estimating model parameters in the training dataset...\n")
     mcmc.chain.trainingData <- assign.mcmc(Y = processed.data$trainingData_sub,
