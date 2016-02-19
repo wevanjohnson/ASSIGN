@@ -5,7 +5,7 @@ Version: 1.7.1
 Date: 2014-10-30
 Author: Ying Shen, Andrea H. Bild, W. Evan Johnson, and Mumtehena Rahman
 Maintainer: Ying Shen <yshen3@bu.edu>, W. Evan Johnson <wej@bu.edu>,
-    David Jenkins <dfj@bu.edu>
+    David Jenkins <dfj@bu.edu>, Mumtehena Rahman <moom.rahman@utah.edu>
 Depends:
     Rlab,
     msm,
